@@ -8,6 +8,11 @@ This is the repository for the project Scenario Generation with Large Language M
 * Install numpy openai backoff tiktoken langchain from pip 
 * Run scenario_generation/notebook_generate_multistep_with_sim_eval.ipynb
 
+# How to run Scenic files in Carla Simulator?
+* First install Carla and make sure `./CarlaUE4.sh` is running at port 2000.
+* Then install Scenic according to its documentation.
+* Run `scenic -S scenic.simulators.carla.model <Scenic-format-File> --2d`
+
 # Our Workflow
 
 The whole projects seem hard to finish within one semester, the goal of the project is limited
