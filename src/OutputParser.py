@@ -1,5 +1,4 @@
 from langchain_core.pydantic_v1 import BaseModel, Field
-from langchain_openai import ChatOpenAI
 
 class Scenic_output(BaseModel):
     '''
@@ -23,15 +22,10 @@ class Scenic_output(BaseModel):
         - Defining Background Cars and Pedestrians
     - 
     '''
-    map: str = Field(
+    map_and_model: str = Field(
         ...,
-        title="Map",
-        description="The map of the scenario"
-    )
-    model: str = Field(
-        ...,
-        title="Model",
-        description="The model of the scenario"
+        title="Map and Model",
+        description="The map and model of the scenario"
     )
     constants: str = Field(
         ...,
@@ -63,3 +57,4 @@ class Scenic_output(BaseModel):
         title="Background Activities",
         description="Defining Background Cars and Pedestrians"
     )
+
