@@ -4,9 +4,17 @@ Ego-vehicle is going straight at an intersection but a crossing vehicle
 runs a red light, forcing the ego-vehicle to perform a collision avoidance maneuver.
 Note: The traffic light control is not implemented yet, but it will soon be. 
 """
-param map = localPath('../../../assets/maps/CARLA/Town05.xodr')
+#################################
+# MAP AND MODEL                 #
+#################################
+
+param map = localPath('../../assets/maps/CARLA/Town05.xodr')
 param carla_map = 'Town05'
 model scenic.simulators.carla.model
+
+#################################
+# CONSTANTS                     #
+#################################
 
 DELAY_TIME_1 = 1 # the delay time for ego
 DELAY_TIME_2 = 40 # the delay time for the slow car
@@ -17,6 +25,9 @@ DISTANCE_TO_INTERSECTION2 = Uniform(10, 15) * -1
 SAFETY_DISTANCE = 20
 BRAKE_INTENSITY = 1.0
 
+#################################
+# AGENT BEHAVIORS               #
+#################################
 
 behavior CrossingCarBehavior(trajectory):
     while True:
@@ -29,6 +40,9 @@ behavior EgoBehavior(trajectory):
     interrupt when withinDistanceToAnyObjs(self, SAFETY_DISTANCE):
         take SetBrakeAction(BRAKE_INTENSITY)
 
+#################################
+# SPATIAL RELATIONS             #
+#################################
 
 spawnAreas = []
 fourWayIntersection = filter(lambda i: i.is4Way, network.intersections)
@@ -43,6 +57,10 @@ conflicting_straight_maneuvers = filter(lambda i: i.type == ManeuverType.STRAIGH
 csm = Uniform(*conflicting_straight_maneuvers)
 crossing_startLane = csm.startLane
 crossing_car_trajectory = [csm.startLane, csm.connectingLane, csm.endLane]
+
+#################################
+# SCENARIO SPECIFICATION        #
+#################################
 
 ego_spwPt = startLane.centerline[-1]
 csm_spwPt = crossing_startLane.centerline[-1]

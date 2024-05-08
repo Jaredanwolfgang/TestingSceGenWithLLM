@@ -4,14 +4,19 @@ Ego-vehicle must go around a blocking object
 using the opposite lane, yielding to oncoming traffic.
 """
 
-# N.B. Town07 is not included with CARLA by default; see installation instructions at
-# https://carla.readthedocs.io/en/latest/start_quickstart/#import-additional-assets
-param map = localPath('../../../assets/maps/CARLA/Town07.xodr')
+#################################
+# MAP AND MODEL                 #
+#################################
+
+param map = localPath('../../assets/maps/CARLA/Town07.xodr')
 param carla_map = 'Town07'
 model scenic.simulators.carla.model
 
 
-#CONSTANTS
+#################################
+# CONSTANTS                     #
+#################################
+
 ONCOMING_THROTTLE = 0.6
 EGO_SPEED = 7
 ONCOMING_CAR_SPEED = 10
@@ -22,6 +27,10 @@ BREAK_INTENSITY = 0.8
 BYPASS_DIST = 5
 DIST_BTW_BLOCKING_ONCOMING_CARS = 10
 DIST_TO_INTERSECTION = 15
+
+#################################
+# AGENT BEHAVIORS               #
+#################################
 
 #EGO BEHAVIOR
 behavior EgoBehavior(path):
@@ -53,7 +62,9 @@ behavior EgoBehavior(path):
 behavior OncomingCarBehavior(path = []):
     do FollowLaneBehavior(ONCOMING_CAR_SPEED)
 
-#GEOMETRY
+#################################
+# SPATIAL RELATIONS             #
+#################################
 
 #Find lanes that have a lane to their left in the opposite direction
 laneSecsWithLeftLane = []
@@ -70,9 +81,11 @@ assert len(laneSecsWithLeftLane) > 0, \
 initLaneSec = Uniform(*laneSecsWithLeftLane)
 leftLaneSec = initLaneSec._laneToLeft
 
-spawnPt = new OrientedPoint on initLaneSec.centerline
+#################################
+# SCENARIO SPECIFICATION        #
+#################################
 
-#PLACEMENT
+spawnPt = new OrientedPoint on initLaneSec.centerline
 oncomingCar = new Car on leftLaneSec.centerline,
     with behavior OncomingCarBehavior()
 

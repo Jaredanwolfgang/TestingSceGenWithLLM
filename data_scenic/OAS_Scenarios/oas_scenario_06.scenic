@@ -3,11 +3,17 @@ Voyage OAS Scenario Unique ID: 2-2-XX-CF-STR-CAR:Pa>E:03
 The car ahead of ego that is badly parked over the sidewalk cuts into ego vehicle's lane.
 This scenario may fail if there exists any obstacle (e.g. fences) on the sidewalk 
 """
-
+#################################
+# MAP AND MODEL                 #
+#################################
 
 param map = localPath('../../../assets/maps/CARLA/Town01.xodr')  # or other CARLA map that definitely works
 param carla_map = 'Town01'
 model scenic.domains.driving.model
+
+#################################
+# CONSTANTS                     #
+#################################
 
 MAX_BREAK_THRESHOLD = 1
 SAFETY_DISTANCE = 8
@@ -15,6 +21,10 @@ PARKING_SIDEWALK_OFFSET_RANGE = 2
 CUT_IN_TRIGGER_DISTANCE = Range(10, 12)
 EGO_SPEED = 8
 PARKEDCAR_SPEED = 7
+
+#################################
+# AGENT BEHAVIORS               #
+#################################
 
 behavior CutInBehavior(laneToFollow, target_speed):
     while (distance from self to ego) > CUT_IN_TRIGGER_DISTANCE:
@@ -26,7 +36,6 @@ behavior CollisionAvoidance():
     while withinDistanceToAnyObjs(self, SAFETY_DISTANCE):
         take SetBrakeAction(MAX_BREAK_THRESHOLD)
 
-
 behavior EgoBehavior(target_speed):
     try: 
         do FollowLaneBehavior(target_speed=target_speed)
@@ -34,10 +43,17 @@ behavior EgoBehavior(target_speed):
     interrupt when withinDistanceToAnyObjs(self, SAFETY_DISTANCE):
         do CollisionAvoidance()
 
+#################################
+# SPATIAL RELATIONS             #
+#################################
 
 roads = network.roads
 select_road = Uniform(*roads)
 ego_lane = select_road.lanes[0]
+
+#################################
+# SCENARIO SPECIFICATION        #
+#################################
 
 ego = new Car on ego_lane.centerline,
         with behavior EgoBehavior(target_speed=EGO_SPEED)

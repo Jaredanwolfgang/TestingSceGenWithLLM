@@ -4,13 +4,18 @@ Longitudinal control after leading vehicle’s brake.
 The leading vehicle decelerates suddenly due to an obstacle and the ego-vehicle must perform an
 emergency brake or an avoidance maneuver.
 """
+#################################
+# MAP AND MODEL                 #
+#################################
 
-## SET MAP AND MODEL (i.e. definitions of all referenceable vehicle types, road library, etc)
-param map = localPath('../../../assets/maps/CARLA/Town01.xodr')
+param map = localPath('../../assets/maps/CARLA/Town01.xodr')
 param carla_map = 'Town01'
 model scenic.simulators.carla.model
 
-## CONSTANTS
+#################################
+# CONSTANTS                     #
+#################################
+
 EGO_MODEL = "vehicle.lincoln.mkz_2017"
 EGO_SPEED = 10
 EGO_BRAKING_THRESHOLD = 12
@@ -20,7 +25,10 @@ LEADCAR_BRAKING_THRESHOLD = 10
 
 BRAKE_ACTION = 1.0
 
-## DEFINING BEHAVIORS
+#################################
+# AGENT BEHAVIORS               #
+#################################
+
 # EGO BEHAVIOR: Follow lane, and brake after passing a threshold distance to the leading car
 behavior EgoBehavior(speed=10):
     try:
@@ -37,12 +45,18 @@ behavior LeadingCarBehavior(speed=10):
     interrupt when withinDistanceToAnyObjs(self, LEADCAR_BRAKING_THRESHOLD):
         take SetBrakeAction(BRAKE_ACTION)
 
-## DEFINING SPATIAL RELATIONS
+#################################
+# SPATIAL RELATIONS             #
+#################################
+
 # Please refer to scenic/domains/driving/roads.py how to access detailed road infrastructure
 # 'network' is the 'class Network' object in roads.py
-
 # make sure to put '*' to uniformly randomly select from all elements of the list, 'lanes'
 lane = Uniform(*network.lanes)
+
+#################################
+# SCENARIO SPECIFICATION        #
+#################################
 
 obstacle = new Trash on lane.centerline
 

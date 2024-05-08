@@ -5,27 +5,43 @@ The ego-vehicle encounters an obstacle / unexpected entity on the road and must 
 emergency brake or an avoidance maneuver.
 """
 
-## SET MAP AND MODEL (i.e. definitions of all referenceable vehicle types, road library, etc)
+#################################
+# MAP AND MODEL                 #
+#################################
+
 param map = localPath('../../../assets/maps/CARLA/Town01.xodr')  # or other CARLA map that definitely works
 param carla_map = 'Town01'
 param render = '0'
 model scenic.simulators.carla.model
 
-## CONSTANTS
+#################################
+# CONSTANTS                     #
+#################################
+
 EGO_MODEL = "vehicle.lincoln.mkz_2017"
 BICYCLE_MIN_SPEED = 1
 THRESHOLD = 15
 
+#################################
+# AGENT BEHAVIORS               #
+#################################
+
 behavior BicycleBehavior(speed=3, threshold=15):
     do CrossingBehavior(ego, speed, threshold)
 
-## GEOMETRY
+#################################
+# SPATIAL RELATIONS             #
+#################################
 
 # make sure to put '*' to uniformly randomly select from all elements of the list
 intersec = Uniform(*network.intersections)
 startLane = Uniform(*intersec.incomingLanes)
 maneuver = Uniform(*startLane.maneuvers)
 ego_trajectory = [maneuver.startLane, maneuver.connectingLane, maneuver.endLane]
+
+#################################
+# SCENARIO SPECIFICATION        #
+#################################
 
 spot = new OrientedPoint in maneuver.startLane.centerline
 ego = new Car at spot,

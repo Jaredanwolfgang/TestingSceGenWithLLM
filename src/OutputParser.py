@@ -13,13 +13,10 @@ class Scenic_output(BaseModel):
         - Ego Behaviors
         - Other Vehicle Behaviors (Leading Cars, Following Cars, 
         Adversary Cars, Adjacent Cars, Pedestrians, etc.)
-    - Defining Spatial Relations
-        - Geometry
-        - Placement
-    - Scenario Specifications
+    - Defining Spatial Relations (Geometry)
+        - Include background activities
+    - Scenario Specifications (Placement)
         - Scenario Specifications
-    - Background Activities
-        - Defining Background Cars and Pedestrians
     - 
     '''
     map_and_model: str = Field(
@@ -51,10 +48,5 @@ class Scenic_output(BaseModel):
         ...,
         title="Scenario",
         description="Scenario Specifications"
-    )
-    background_activities: str = Field(
-        ...,
-        title="Background Activities",
-        description="Defining Background Cars and Pedestrians"
     )
 

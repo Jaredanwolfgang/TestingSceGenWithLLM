@@ -27,13 +27,12 @@ def convert_file(in_file_name, output_dir):
                 "behaviors" : None,
                 "spatial_relations" : None,
                 "scenario" : None,
-                "background" : None,
                 "name" : base_file_name}
 
     current_doc = None
     line = 1
     for token in tokens:
-        if token.type == 61: # Comment Type
+        if token.type == tokenize.COMMENT: # Comment Type
             if "map" in token.string.lower():
                 current_doc = "map_and_model"
             elif "constants" in token.string.lower():
@@ -46,8 +45,6 @@ def convert_file(in_file_name, output_dir):
                 current_doc = "spatial_relations"
             elif "scenario" in token.string.lower():
                 current_doc = "scenario"
-            elif "background" in token.string.lower():
-                current_doc = "background"
         else:
             if current_doc is not None and out_dict[current_doc] is not None and token.start[0] != line:
                 out_dict[current_doc] += token.line

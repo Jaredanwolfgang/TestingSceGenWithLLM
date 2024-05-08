@@ -5,18 +5,27 @@ The ego-vehicle is going straight at an intersection but a crossing vehicle runs
 forcing the ego-vehicle to avoid the collision.
 """
 
-## SET MAP AND MODEL (i.e. definitions of all referenceable vehicle types, road library, etc)
+#################################
+# MAP AND MODEL                 #
+#################################
+
 param map = localPath('../../../assets/maps/CARLA/Town05.xodr')  # or other CARLA map that definitely works
 param carla_map = 'Town05'
 param render = '0'
 model scenic.simulators.carla.model
 
-## CONSTANTS
+#################################
+# CONSTANTS                     #
+#################################
+
 EGO_SPEED = 10
 SAFETY_DISTANCE = 20
 BRAKE_INTENSITY = 1.0
 
-## MONITORS
+#################################
+# MONITORS                      #
+#################################
+
 monitor TrafficLights():
     freezeTrafficLights()
     while True:
@@ -27,16 +36,21 @@ monitor TrafficLights():
         wait
 require monitor TrafficLights()
 
-## DEFINING BEHAVIORS
+#################################
+# AGENT BEHAVIORS               #
+#################################
+
 behavior AdversaryBehavior(trajectory):
     while (ego.speed < 0.1):
         wait
     do FollowTrajectoryBehavior(trajectory=trajectory)
 
-## DEFINING SPATIAL RELATIONS
+#################################
+# SPATIAL RELATIONS             #
+#################################
+
 # Please refer to scenic/domains/driving/roads.py how to access detailed road infrastructure
 # 'network' is the 'class Network' object in roads.py
-
 fourWayIntersection = filter(lambda i: i.is4Way and i.isSignalized, network.intersections)
 
 # make sure to put '*' to uniformly randomly select from all elements of the list
@@ -51,7 +65,10 @@ adv_maneuvers = filter(lambda i: i.type == ManeuverType.STRAIGHT, ego_maneuver.c
 adv_maneuver = Uniform(*adv_maneuvers)
 adv_trajectory = [adv_maneuver.startLane, adv_maneuver.connectingLane, adv_maneuver.endLane]
 
-## OBJECT PLACEMENT
+#################################
+# SCENARIO SPECIFICATION        #
+#################################
+
 ego_spawn_pt = new OrientedPoint in ego_maneuver.startLane.centerline
 adv_spawn_pt = new OrientedPoint in adv_maneuver.startLane.centerline
 

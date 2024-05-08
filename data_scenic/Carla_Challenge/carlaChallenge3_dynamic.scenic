@@ -5,12 +5,18 @@ The ego-vehicle encounters an obstacle / unexpected entity on the road and must 
 emergency brake or an avoidance maneuver.
 """
 
-# SET MAP AND MODEL (i.e. definitions of all referenceable vehicle types, road library, etc)
-param map = localPath('../../../assets/maps/CARLA/Town05.xodr')
+#################################
+# MAP AND MODEL                 #
+#################################
+
+param map = localPath('../../assets/maps/CARLA/Town05.xodr')
 param carla_map = 'Town05'
 model scenic.simulators.carla.model
 
-# CONSTANTS
+#################################
+# CONSTANTS                     #
+#################################
+
 EGO_MODEL = "vehicle.lincoln.mkz_2017"
 EGO_SPEED = 10
 SAFETY_DISTANCE = 10
@@ -18,6 +24,10 @@ BRAKE_INTENSITY = 1.0
 
 PEDESTRIAN_MIN_SPEED = 1.0
 THRESHOLD = 20
+
+#################################
+# AGENT BEHAVIORS               #
+#################################
 
 # EGO BEHAVIOR: Follow lane and brake when reaches threshold distance to obstacle
 behavior EgoBehavior(speed=10):
@@ -29,12 +39,18 @@ behavior EgoBehavior(speed=10):
 behavior PedestrianBehavior(min_speed=1, threshold=10):
     do CrossingBehavior(ego, min_speed, threshold)
 
-## DEFINING SPATIAL RELATIONS
+#################################
+# SPATIAL RELATIONS             #
+#################################
+
 # Please refer to scenic/domains/driving/roads.py how to access detailed road infrastructure
 # 'network' is the 'class Network' object in roads.py 
-
 # make sure to put '*' to uniformly randomly select from all elements of the list, 'network.lanes'
 lane = Uniform(*network.lanes)
+
+#################################
+# SCENARIO SPECIFICATION        #
+#################################
 
 spot = new OrientedPoint on lane.centerline
 vending_spot = new OrientedPoint following roadDirection from spot for -3

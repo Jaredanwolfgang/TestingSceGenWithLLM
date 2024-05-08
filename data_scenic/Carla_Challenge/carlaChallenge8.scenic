@@ -5,18 +5,27 @@ The ego-vehicle is performing an unprotected left turn at an intersection, yield
 traffic.
 """
 
-## SET MAP AND MODEL (i.e. definitions of all referenceable vehicle types, road library, etc)
-param map = localPath('../../../assets/maps/CARLA/Town05.xodr')
+#################################
+# MAP AND MODEL                 #
+#################################
+
+param map = localPath('../../assets/maps/CARLA/Town05.xodr')
 param carla_map = 'Town05'
 model scenic.simulators.carla.model
 
-## CONSTANTS
+#################################
+# CONSTANTS                     #
+#################################
+
 EGO_MODEL = "vehicle.lincoln.mkz_2017"
 EGO_SPEED = 10
 SAFETY_DISTANCE = 20
 BRAKE_INTENSITY = 1.0
 
-## MONITORS
+#################################
+# MONITORS                      #
+#################################
+
 monitor TrafficLights():
     freezeTrafficLights()
     while True:
@@ -27,7 +36,10 @@ monitor TrafficLights():
         wait
 require monitor TrafficLights()
 
-## DEFINING BEHAVIORS
+#################################
+# AGENT BEHAVIORS               #
+#################################
+
 behavior AdversaryBehavior(trajectory):
     do FollowTrajectoryBehavior(trajectory=trajectory)
 
@@ -38,10 +50,12 @@ behavior EgoBehavior(speed, trajectory):
     interrupt when withinDistanceToAnyObjs(self, SAFETY_DISTANCE):
         take SetBrakeAction(BRAKE_INTENSITY)
 
-## DEFINING SPATIAL RELATIONS
+#################################
+# SPATIAL RELATIONS             #
+#################################
+
 # Please refer to scenic/domains/driving/roads.py how to access detailed road infrastructure
 # 'network' is the 'class Network' object in roads.py
-
 # The meaning of filter() function is explained in examples/carla/Carla_Challenge/carlaChallenge7.scenic
 fourWayIntersection = filter(lambda i: i.is4Way and i.isSignalized, network.intersections)
 
@@ -64,7 +78,10 @@ adv_trajectory = [adv_maneuver.startLane, adv_maneuver.connectingLane, adv_maneu
 adv_start_lane = adv_maneuver.startLane
 adv_end_section = adv_maneuver.endLane.sections[0]
 
-## OBJECT PLACEMENT
+#################################
+# SCENARIO SPECIFICATION        #
+#################################
+
 ego_spawn_pt = new OrientedPoint in ego_maneuver.startLane.centerline
 adv_spawn_pt = new OrientedPoint in adv_maneuver.startLane.centerline
 

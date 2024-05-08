@@ -71,11 +71,9 @@ advSpawnPt = new OrientedPoint in advInitLane.centerline
 #################################
 
 ego = new Car at egoSpawnPt,
-    with blueprint MODEL,
     with behavior EgoBehavior(egoTrajectory)
 
 adversary = new Car at advSpawnPt,
-    with blueprint MODEL,
     with behavior FollowTrajectoryBehavior(target_speed=globalParameters.ADV_SPEED, trajectory=advTrajectory)
 
 require EGO_INIT_DIST[0] <= (distance to intersection) <= EGO_INIT_DIST[1]

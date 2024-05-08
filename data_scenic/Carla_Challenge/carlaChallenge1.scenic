@@ -5,26 +5,41 @@ The ego-vehicle loses control due to bad conditions on the road and it must reco
 its original lane.
 """
 
-## SET MAP AND MODEL (i.e. definitions of all referenceable vehicle types, road library, etc)
-param map = localPath('../../../assets/maps/CARLA/Town01.xodr')
+#################################
+# MAP AND MODEL                 #
+#################################
+
+param map = localPath('../../assets/maps/CARLA/Town01.xodr')
 param carla_map = 'Town01'
 model scenic.simulators.carla.model
 
-## CONSTANTS
+#################################
+# CONSTANTS                     #
+#################################
+
 EGO_MODEL = "vehicle.lincoln.mkz_2017"
 EGO_SPEED = 10
 
-## DEFINING BEHAVIORS
+#################################
+# AGENT BEHAVIORS               #
+#################################
+
 # EGO BEHAVIOR: Follow lane, and brake after passing a threshold distance to the leading car
 behavior EgoBehavior(speed=10):
     do FollowLaneBehavior(speed)
 
-## DEFINING SPATIAL RELATIONS
+#################################
+# SPATIAL RELATIONS             #
+#################################
+
 # Please refer to scenic/domains/driving/roads.py how to access detailed road infrastructure
 # 'network' is the 'class Network' object in roads.py
-
 # make sure to put '*' to uniformly randomly select from all elements of the list, 'lanes'
 lane = Uniform(*network.lanes)
+
+#################################
+# SCENARIO SPECIFICATION        #
+#################################
 
 start = new OrientedPoint on lane.centerline
 ego = new Car at start,

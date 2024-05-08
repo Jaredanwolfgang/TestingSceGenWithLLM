@@ -2,19 +2,27 @@
 Example scenario of traffic lights management.
 """
 
-## SET MAP AND MODEL (i.e. definitions of all referenceable vehicle types, road library, etc)
+#################################
+# MAP AND MODEL                 #
+#################################
+
 param map = localPath('../../assets/maps/CARLA/Town01.xodr')  # or other CARLA map that definitely works
 param carla_map = 'Town01'
 model scenic.simulators.carla.model
 
-## CONSTANTS
+#################################
+# CONSTANTS                     #
+#################################
+
 EGO_MODEL = "vehicle.lincoln.mkz_2017"
 EGO_SPEED = 10
 
-## DEFINING BEHAVIORS
+#################################
+# AGENT BEHAVIORS               #
+#################################
+
 # Refer to scenic/simulators/carla/model.scenic for more information
 # about how to access detailed information about traffic lights
-
 # EGO BEHAVIOR: Follow the lane respecting the traffic lights
 behavior EgoBehaviorTL(speed=10):
     try:
@@ -22,14 +30,20 @@ behavior EgoBehaviorTL(speed=10):
     interrupt when withinDistanceToRedYellowTrafficLight(self, 15):
         take SetBrakeAction(1.0)
 
-## DEFINING SPATIAL RELATIONS
+#################################
+# SPATIAL RELATIONS             #
+#################################
+
 # Please refer to scenic/domains/driving/roads.py how to access detailed road infrastructure
 # 'network' is the 'class Network' object in roads.py
 
 # make sure to put '*' to uniformly randomly select from all elements of the list, 'lanes'
 lane = Uniform(*network.lanes)
 
-## ACTOR CREATION
+#################################
+# SCENARIO SPECIFICATION        #
+#################################
+
 # Please refer to scenic/simulators/carla/model.scenic for detailed information about
 # the different actor attributes
 ego = new Car on lane.centerline,

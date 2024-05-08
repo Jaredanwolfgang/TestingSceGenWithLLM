@@ -2,9 +2,18 @@
 Based on 2019 Carla Challenge Traffic Scenario 09.
 Ego-vehicle is performing a right turn at an intersection, yielding to crossing traffic.
 """
-param map = localPath('../../../assets/maps/CARLA/Town05.xodr')
+
+#################################
+# MAP AND MODEL                 #
+#################################
+
+param map = localPath('../../assets/maps/CARLA/Town05.xodr')
 param carla_map = 'Town05'
 model scenic.simulators.carla.model
+
+#################################
+# CONSTANTS                     #
+#################################
 
 DELAY_TIME_1 = 1 # the delay time for ego
 DELAY_TIME_2 = 40 # the delay time for the slow car
@@ -15,6 +24,9 @@ DISTANCE_TO_INTERSECTION2 = Uniform(15, 20) * -1
 SAFETY_DISTANCE = 20
 BRAKE_INTENSITY = 1.0
 
+#################################
+# AGENT BEHAVIORS               #
+#################################
 
 behavior CrossingCarBehavior(trajectory):
     do FollowTrajectoryBehavior(trajectory = trajectory)
@@ -26,6 +38,9 @@ behavior EgoBehavior(trajectory):
     interrupt when withinDistanceToAnyObjs(self, SAFETY_DISTANCE):
         take SetBrakeAction(BRAKE_INTENSITY)
 
+#################################
+# SPATIAL RELATIONS             #
+#################################
 
 spawnAreas = []
 fourWayIntersection = filter(lambda i: i.is4Way, network.intersections)
@@ -41,6 +56,10 @@ ego_rightTurn_maneuver = Uniform(*conflicting_rightTurn_maneuvers)
 ego_startLane = ego_rightTurn_maneuver.startLane
 ego_trajectory = [ego_rightTurn_maneuver.startLane, ego_rightTurn_maneuver.connectingLane, \
                                 ego_rightTurn_maneuver.endLane]
+
+#################################
+# SCENARIO SPECIFICATION        #
+#################################
 
 spwPt = startLane.centerline[-1]
 csm_spwPt = ego_startLane.centerline[-1]

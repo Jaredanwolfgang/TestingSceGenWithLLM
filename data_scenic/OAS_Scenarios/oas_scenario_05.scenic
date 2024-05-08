@@ -2,15 +2,26 @@
 Voyage OAS Scenario Unique ID: 2-2-XX-CF-STR-CAR:Pa>E:03
 The lead car suddenly stops and then resumes moving forward
 """
+#################################
+# MAP AND MODEL                 #
+#################################
 
 param map = localPath('../../../assets/maps/CARLA/Town01.xodr')  # or other CARLA map that definitely works
 param carla_map = 'Town01'
 model scenic.domains.driving.model
 
+#################################
+# CONSTANTS                     #
+#################################
+
 MAX_BREAK_THRESHOLD = 1
 SAFETY_DISTANCE = 10
 INITIAL_DISTANCE_APART = -1 * Uniform(5, 10)
 STEPS_PER_SEC = 10
+
+#################################
+# AGENT BEHAVIORS               #
+#################################
 
 behavior LeadCarBehavior():
     try:
@@ -24,17 +35,23 @@ behavior CollisionAvoidance():
 
 
 behavior FollowLeadCarBehavior():
-
     try: 
         do FollowLaneBehavior()
 
     interrupt when withinDistanceToAnyObjs(self, SAFETY_DISTANCE):
         do CollisionAvoidance()
 
+#################################
+# SPATIAL RELATIONS             #
+#################################
 
 roads = network.roads
 select_road = Uniform(*roads)
 select_lane = Uniform(*select_road.lanes)
+
+#################################
+# SCENARIO SPECIFICATION        #
+#################################
 
 other = new Car on select_lane.centerline,
         with behavior LeadCarBehavior()

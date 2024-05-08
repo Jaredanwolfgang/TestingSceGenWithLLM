@@ -5,19 +5,28 @@ The ego-vehicle encounters an obstacle / unexpected entity on the road and must 
 emergency brake or an avoidance maneuver.
 """
 
-## SET MAP AND MODEL (i.e. definitions of all referenceable vehicle types, road library, etc)
-param map = localPath('../../../assets/maps/CARLA/Town01.xodr')
+#################################
+# MAP AND MODEL                 #
+#################################
+
+param map = localPath('../../assets/maps/CARLA/Town01.xodr')
 param carla_map = 'Town01'
 model scenic.simulators.carla.model
 
-## CONSTANTS
+#################################
+# CONSTANTS                     #
+#################################
+
 EGO_MODEL = "vehicle.lincoln.mkz_2017"
 BICYCLE_MIN_SPEED = 1.5
 THRESHOLD = 18
 BRAKE_ACTION = 1.0
 SAFETY_DISTANCE = 10
 
-## DEFINING BEHAVIORS
+#################################
+# AGENT BEHAVIORS               #
+#################################
+
 behavior EgoBehavior(trajectory):
     try:
         do FollowTrajectoryBehavior(trajectory = trajectory)
@@ -28,12 +37,19 @@ behavior EgoBehavior(trajectory):
 behavior BicycleBehavior(speed=3, threshold=15):
     do CrossingBehavior(ego, speed, threshold)
 
-## DEFINING SPATIAL RELATIONS
+#################################
+# SPATIAL RELATIONS             #
+#################################
+
 # make sure to put '*' to uniformly randomly select from all elements of the list
 intersec = Uniform(*network.intersections)
 startLane = Uniform(*intersec.incomingLanes)
 maneuver = Uniform(*startLane.maneuvers)
 ego_trajectory = [maneuver.startLane, maneuver.connectingLane, maneuver.endLane]
+
+#################################
+# SCENARIO SPECIFICATION        #
+#################################
 
 spot = new OrientedPoint in maneuver.startLane.centerline
 ego = new Car at spot,

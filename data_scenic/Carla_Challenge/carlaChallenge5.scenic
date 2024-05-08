@@ -2,15 +2,27 @@
 Based on 2019 Carla Challenge Traffic Scenario 05.
 Ego-vehicle performs a lane changing to evade a leading vehicle, which is moving too slowly.
 """
-param map = localPath('../../../assets/maps/CARLA/Town05.xodr')
+
+#################################
+# MAP AND MODEL                 #
+#################################
+
+param map = localPath('../../assets/maps/CARLA/Town05.xodr')
 param carla_map = 'Town05'
 model scenic.simulators.carla.model
 
-#CONSTANTS
+#################################
+# CONSTANTS                     #
+#################################
+
 EGO_SPEED = 10
 SLOW_CAR_SPEED = 6
 EGO_TO_BICYCLE = 10
 DIST_THRESHOLD = 15
+
+#################################
+# AGENT BEHAVIORS               #
+#################################
 
 #EGO BEHAVIOR: Follow lane, then perform a lane change
 behavior EgoBehavior(leftpath, origpath=[]):
@@ -27,7 +39,10 @@ behavior EgoBehavior(leftpath, origpath=[]):
 behavior SlowCarBehavior():
     do FollowLaneBehavior(SLOW_CAR_SPEED)
 
-#GEOMETRY
+#################################
+# SPATIAL RELATIONS             #
+#################################
+
 laneSecsWithRightLane = []
 for lane in network.lanes:
     for laneSec in lane.sections:
@@ -40,7 +55,10 @@ assert len(laneSecsWithRightLane) > 0, \
 initLaneSec = Uniform(*laneSecsWithRightLane)
 rightLane = initLaneSec._laneToRight
 
-#PLACEMENT
+#################################
+# SCENARIO SPECIFICATION        #
+#################################
+
 spawnPt = new OrientedPoint on initLaneSec.centerline
 
 ego = new Car at spawnPt,
