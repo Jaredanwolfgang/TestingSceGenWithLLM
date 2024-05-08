@@ -1,0 +1,11 @@
+{
+  "docstring": "\"\"\" Scenario Description\nTraffic Scenario 03 (dynamic).\nObstacle avoidance without prior action.\nThe ego-vehicle encounters an obstacle / unexpected entity on the road and must perform an\nemergency brake or an avoidance maneuver.\n\"\"\"",
+  "has_docstring": true,
+  "map_and_model": "\nparam map = localPath('../../assets/maps/CARLA/Town05.xodr')  # or other CARLA map that definitely works\nparam carla_map = 'Town05'\nparam render = 0\nmodel scenic.simulators.carla.model\n\n",
+  "constants": "\nEGO_MODEL = \"vehicle.lincoln.mkz_2017\"\nEGO_SPEED = 10\nPEDESTRIAN_MIN_SPEED = 0.5\nTHRESHOLD = 17\n\n",
+  "monitors": null,
+  "behaviors": "\nbehavior PedestrianBehavior(min_speed=1, threshold=10):\n    while (ego.speed <= 0.1):\n        wait\n\n    do CrossingBehavior(ego, min_speed, threshold)\n\n",
+  "spatial_relations": "\nlane = Uniform(*network.lanes)\n\n",
+  "scenario": "\nspot = new OrientedPoint on lane.centerline\nvending_spot = new OrientedPoint following roadDirection from spot for -3\n\npedestrian = new Pedestrian right of spot by 3,\n    with heading 90 deg relative to spot.heading,\n    with regionContainedIn None,\n    with behavior PedestrianBehavior(PEDESTRIAN_MIN_SPEED, THRESHOLD)\n\nvending_machine = new VendingMachine right of vending_spot by 3,\n    with heading -90 deg relative to vending_spot.heading,\n    with regionContainedIn None\n\nego = new Car following roadDirection from spot for Range(-30, -20),\n    with blueprint EGO_MODEL,\n    with rolename \"hero\"\n\nrequire (distance to intersection) > 50\nrequire always (ego.laneSection._slowerLane is None)\nterminate when (distance to spot) > 50\n",
+  "name": "carlaChallenge3_dynamic_man"
+}

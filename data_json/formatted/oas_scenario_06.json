@@ -1,0 +1,11 @@
+{
+  "docstring": "\"\"\" Scenario Description\nVoyage OAS Scenario Unique ID: 2-2-XX-CF-STR-CAR:Pa>E:03\nThe car ahead of ego that is badly parked over the sidewalk cuts into ego vehicle's lane.\nThis scenario may fail if there exists any obstacle (e.g. fences) on the sidewalk \n\"\"\"",
+  "has_docstring": true,
+  "map_and_model": "\nparam map = localPath('../../assets/maps/CARLA/Town01.xodr')  # or other CARLA map that definitely works\nparam carla_map = 'Town01'\nmodel scenic.domains.driving.model\n\n",
+  "constants": "\nMAX_BREAK_THRESHOLD = 1\nSAFETY_DISTANCE = 8\nPARKING_SIDEWALK_OFFSET_RANGE = 2\nCUT_IN_TRIGGER_DISTANCE = Range(10, 12)\nEGO_SPEED = 8\nPARKEDCAR_SPEED = 7\n\n",
+  "monitors": null,
+  "behaviors": "\nbehavior CutInBehavior(laneToFollow, target_speed):\n    while (distance from self to ego) > CUT_IN_TRIGGER_DISTANCE:\n        wait\n\n    do FollowLaneBehavior(laneToFollow = laneToFollow, target_speed=target_speed)\n\nbehavior CollisionAvoidance():\n    while withinDistanceToAnyObjs(self, SAFETY_DISTANCE):\n        take SetBrakeAction(MAX_BREAK_THRESHOLD)\n\nbehavior EgoBehavior(target_speed):\n    try: \n        do FollowLaneBehavior(target_speed=target_speed)\n\n    interrupt when withinDistanceToAnyObjs(self, SAFETY_DISTANCE):\n        do CollisionAvoidance()\n\n",
+  "spatial_relations": "\nroads = network.roads\nselect_road = Uniform(*roads)\nego_lane = select_road.lanes[0]\n\n",
+  "scenario": "\nego = new Car on ego_lane.centerline,\n        with behavior EgoBehavior(target_speed=EGO_SPEED)\n        \nspot = new OrientedPoint on visible curb\nparkedHeadingAngle = Uniform(-1,1)*Range(10,20) deg\n\nother = new Car left of (spot offset by PARKING_SIDEWALK_OFFSET_RANGE @ 0), facing parkedHeadingAngle relative to ego.heading,\n            with behavior CutInBehavior(ego_lane, target_speed=PARKEDCAR_SPEED),\n            with regionContainedIn None\n\nrequire (angle from ego to other) - ego.heading < 0 deg\nrequire 10 < (distance from ego to other) < 20\n",
+  "name": "oas_scenario_06"
+}

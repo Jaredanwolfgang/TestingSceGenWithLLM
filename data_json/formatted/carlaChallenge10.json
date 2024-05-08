@@ -1,0 +1,11 @@
+{
+  "docstring": "\"\"\" Scenario Description\nTraffic Scenario 10.\nCrossing negotiation at an unsignalized intersection.\nThe ego-vehicle needs to negotiate with other vehicles to cross an unsignalized intersection. In\nthis situation it is assumed that the first to enter the intersection has priority.\n\"\"\"",
+  "has_docstring": true,
+  "map_and_model": "\nparam map = localPath('../../assets/maps/CARLA/Town05.xodr')\nparam carla_map = 'Town05'\nmodel scenic.simulators.carla.model\n\n",
+  "constants": "\nEGO_MODEL = \"vehicle.lincoln.mkz_2017\"\nEGO_SPEED = 10\nSAFETY_DISTANCE = 20\nBRAKE_INTENSITY = 1.0\n\n",
+  "monitors": null,
+  "behaviors": "\nbehavior AdversaryBehavior(trajectory):\n    do FollowTrajectoryBehavior(trajectory=trajectory)\n\nbehavior EgoBehavior(speed, trajectory):\n    try:\n        do FollowTrajectoryBehavior(target_speed=speed, trajectory=trajectory)\n        do FollowLaneBehavior(target_speed=speed)\n    interrupt when withinDistanceToAnyObjs(self, SAFETY_DISTANCE):\n        take SetBrakeAction(BRAKE_INTENSITY)\n\n",
+  "spatial_relations": "\n\nfourWayIntersection = filter(lambda i: i.is4Way and not i.isSignalized, network.intersections)\n\nintersec = Uniform(*fourWayIntersection)\nego_start_lane = Uniform(*intersec.incomingLanes)\n\nego_maneuver = Uniform(*ego_start_lane.maneuvers)\nego_trajectory = [ego_maneuver.startLane, ego_maneuver.connectingLane, ego_maneuver.endLane]\n\nadv_maneuver = Uniform(*ego_maneuver.conflictingManeuvers)\nadv_trajectory = [adv_maneuver.startLane, adv_maneuver.connectingLane, adv_maneuver.endLane]\nadv_start_lane = adv_maneuver.startLane\n\n",
+  "scenario": "\nego_spawn_pt = new OrientedPoint in ego_maneuver.startLane.centerline\nadv_spawn_pt = new OrientedPoint in adv_maneuver.startLane.centerline\n\nego = new Car at ego_spawn_pt,\n    with blueprint EGO_MODEL,\n    with behavior EgoBehavior(EGO_SPEED, ego_trajectory)\n\nadversary = new Car at adv_spawn_pt,\n    with behavior AdversaryBehavior(adv_trajectory)\n\nrequire 20 <= (distance to intersec) <= 25\nrequire 15 <= (distance from adversary to intersec) <= 20\nterminate when (distance to ego_spawn_pt) > 70\n",
+  "name": "carlaChallenge10"
+}

@@ -1,0 +1,11 @@
+{
+  "docstring": "\"\"\" Scenario Description\nTraffic Scenario 04.\nObstacle avoidance without prior action.\nThe ego-vehicle encounters an obstacle / unexpected entity on the road and must perform an\nemergency brake or an avoidance maneuver.\n\"\"\"",
+  "has_docstring": true,
+  "map_and_model": "\nparam map = localPath('../../assets/maps/CARLA/Town01.xodr')\nparam carla_map = 'Town01'\nmodel scenic.simulators.carla.model\n\n",
+  "constants": "\nEGO_MODEL = \"vehicle.lincoln.mkz_2017\"\nBICYCLE_MIN_SPEED = 1.5\nTHRESHOLD = 18\nBRAKE_ACTION = 1.0\nSAFETY_DISTANCE = 10\n\n",
+  "monitors": null,
+  "behaviors": "\nbehavior EgoBehavior(trajectory):\n    try:\n        do FollowTrajectoryBehavior(trajectory = trajectory)\n\n    interrupt when withinDistanceToObjsInLane(self, SAFETY_DISTANCE):\n        take SetBrakeAction(BRAKE_ACTION)\n\nbehavior BicycleBehavior(speed=3, threshold=15):\n    do CrossingBehavior(ego, speed, threshold)\n\n",
+  "spatial_relations": "\nintersec = Uniform(*network.intersections)\nstartLane = Uniform(*intersec.incomingLanes)\nmaneuver = Uniform(*startLane.maneuvers)\nego_trajectory = [maneuver.startLane, maneuver.connectingLane, maneuver.endLane]\n\n",
+  "scenario": "\nspot = new OrientedPoint in maneuver.startLane.centerline\nego = new Car at spot,\n    with blueprint EGO_MODEL,\n    with behavior EgoBehavior(trajectory = ego_trajectory)\n\nspotBicycle = new OrientedPoint in maneuver.endLane.centerline,\n    facing roadDirection\nbicycle = new Bicycle at spotBicycle offset by 3.5@0,\n    with heading 90 deg relative to spotBicycle.heading,\n    with behavior BicycleBehavior(BICYCLE_MIN_SPEED, THRESHOLD),\n    with regionContainedIn None\n\nrequire 10 <= (distance to intersec) <= 15\nrequire 10 <= (distance from bicycle to intersec) <= 15\nterminate when (distance to spot) > 50\n",
+  "name": "carlaChallenge4"
+}

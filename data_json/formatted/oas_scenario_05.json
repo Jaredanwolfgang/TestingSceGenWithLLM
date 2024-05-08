@@ -1,0 +1,11 @@
+{
+  "docstring": "\"\"\" Scenario Description\nVoyage OAS Scenario Unique ID: 2-2-XX-CF-STR-CAR:Pa>E:03\nThe lead car suddenly stops and then resumes moving forward\n\"\"\"",
+  "has_docstring": true,
+  "map_and_model": "\nparam map = localPath('../../../assets/maps/CARLA/Town01.xodr')  # or other CARLA map that definitely works\nparam carla_map = 'Town01'\nmodel scenic.domains.driving.model\n\n",
+  "constants": "\nMAX_BREAK_THRESHOLD = 1\nSAFETY_DISTANCE = 10\nINITIAL_DISTANCE_APART = -1 * Uniform(5, 10)\nSTEPS_PER_SEC = 10\n\n",
+  "monitors": null,
+  "behaviors": "\nbehavior LeadCarBehavior():\n    try:\n        do FollowLaneBehavior()\n    interrupt when 5 * STEPS_PER_SEC < simulation().currentTime and simulation().currentTime < 6 * STEPS_PER_SEC:\n        take SetBrakeAction(MAX_BREAK_THRESHOLD)\n\nbehavior CollisionAvoidance():\n    while withinDistanceToAnyObjs(self, SAFETY_DISTANCE):\n        take SetBrakeAction(MAX_BREAK_THRESHOLD)\n\n\nbehavior FollowLeadCarBehavior():\n    try: \n        do FollowLaneBehavior()\n\n    interrupt when withinDistanceToAnyObjs(self, SAFETY_DISTANCE):\n        do CollisionAvoidance()\n\n",
+  "spatial_relations": "\nroads = network.roads\nselect_road = Uniform(*roads)\nselect_lane = Uniform(*select_road.lanes)\n\n",
+  "scenario": "\nother = new Car on select_lane.centerline,\n        with behavior LeadCarBehavior()\n\nego = new Car following roadDirection from other for INITIAL_DISTANCE_APART,\n        with behavior FollowLeadCarBehavior()",
+  "name": "oas_scenario_05"
+}

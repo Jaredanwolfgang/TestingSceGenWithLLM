@@ -1,0 +1,11 @@
+{
+  "docstring": "\"\"\" Scenario Description\nTraffic Scenario 07.\nCrossing traffic running a red light at an intersection.\nThe ego-vehicle is going straight at an intersection but a crossing vehicle runs a red light,\nforcing the ego-vehicle to avoid the collision.\n\"\"\"",
+  "has_docstring": true,
+  "map_and_model": "\nparam map = localPath('../../assets/maps/CARLA/Town05.xodr')  # or other CARLA map that definitely works\nparam carla_map = 'Town05'\nparam render = '0'\nmodel scenic.simulators.carla.model\n\n",
+  "constants": "\nEGO_SPEED = 10\nSAFETY_DISTANCE = 20\nBRAKE_INTENSITY = 1.0\n\n",
+  "monitors": "\nmonitor TrafficLights():\n    freezeTrafficLights()\n    while True:\n        if withinDistanceToTrafficLight(ego, 100):\n            setClosestTrafficLightStatus(ego, \"green\")\n        if withinDistanceToTrafficLight(adversary, 100):\n            setClosestTrafficLightStatus(adversary, \"red\")\n        wait\nrequire monitor TrafficLights()\n\n",
+  "behaviors": "\nbehavior AdversaryBehavior(trajectory):\n    while (ego.speed < 0.1):\n        wait\n    do FollowTrajectoryBehavior(trajectory=trajectory)\n\n",
+  "spatial_relations": "\nfourWayIntersection = filter(lambda i: i.is4Way and i.isSignalized, network.intersections)\n\nintersec = Uniform(*fourWayIntersection)\nego_startLane = Uniform(*intersec.incomingLanes)\n\nego_maneuvers = filter(lambda i: i.type == ManeuverType.STRAIGHT, ego_startLane.maneuvers)\nego_maneuver = Uniform(*ego_maneuvers)\nego_trajectory = [ego_maneuver.startLane, ego_maneuver.connectingLane, ego_maneuver.endLane]\n\nadv_maneuvers = filter(lambda i: i.type == ManeuverType.STRAIGHT, ego_maneuver.conflictingManeuvers)\nadv_maneuver = Uniform(*adv_maneuvers)\nadv_trajectory = [adv_maneuver.startLane, adv_maneuver.connectingLane, adv_maneuver.endLane]\n\n",
+  "scenario": "\nego_spawn_pt = new OrientedPoint in ego_maneuver.startLane.centerline\nadv_spawn_pt = new OrientedPoint in adv_maneuver.startLane.centerline\n\nego = new Car at ego_spawn_pt,\n    with rolename \"hero\"\n\nadversary = new Car at adv_spawn_pt,\n    with behavior AdversaryBehavior(adv_trajectory)\n\nrequire 15 <= (distance to intersec) <= 20\nrequire 10 <= (distance from adversary to intersec) <= 15\nterminate when (distance to ego_spawn_pt) > 70\n",
+  "name": "carlaChallenge7"
+}

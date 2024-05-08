@@ -9,7 +9,7 @@ forcing the ego-vehicle to avoid the collision.
 # MAP AND MODEL                 #
 #################################
 
-param map = localPath('../../../assets/maps/CARLA/Town05.xodr')  # or other CARLA map that definitely works
+param map = localPath('../../assets/maps/CARLA/Town05.xodr')  # or other CARLA map that definitely works
 param carla_map = 'Town05'
 param render = '0'
 model scenic.simulators.carla.model

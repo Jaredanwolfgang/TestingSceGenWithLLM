@@ -1,0 +1,11 @@
+{
+  "docstring": "\"\"\" Scenario Description\nTraffic Scenario 01.\nControl loss without previous action.\nThe ego-vehicle loses control due to bad conditions on the road and it must recover, coming back to\nits original lane.\n\"\"\"",
+  "has_docstring": true,
+  "map_and_model": "\nparam map = localPath('../../assets/maps/CARLA/Town01.xodr')\nparam carla_map = 'Town01'\nmodel scenic.simulators.carla.model\n\n",
+  "constants": "\nEGO_MODEL = \"vehicle.lincoln.mkz_2017\"\nEGO_SPEED = 10\n\n",
+  "monitors": null,
+  "behaviors": "\nbehavior EgoBehavior(speed=10):\n    do FollowLaneBehavior(speed)\n\n",
+  "spatial_relations": "\nlane = Uniform(*network.lanes)\n\n",
+  "scenario": "\nstart = new OrientedPoint on lane.centerline\nego = new Car at start,\n    with blueprint EGO_MODEL,\n    with behavior EgoBehavior(EGO_SPEED)\n\ndebris1 = new Debris following roadDirection for Range(10, 20)\ndebris2 = new Debris following roadDirection from debris1 for Range(5, 10)\ndebris3 = new Debris following roadDirection from debris2 for Range(5, 10)\n\nrequire (distance to intersection) > 50\nterminate when (distance from debris3 to ego) > 10 and (distance to start) > 50\n",
+  "name": "carlaChallenge1"
+}

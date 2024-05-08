@@ -1,0 +1,11 @@
+{
+  "docstring": "\"\"\" Scenario Description\nBackground Activity\nThe simulation is filled with vehicles that freely roam around the town.\nThis simulates normal driving conditions, without any abnormal behaviors\n\"\"\"",
+  "has_docstring": true,
+  "map_and_model": "\nparam map = localPath('../../assets/maps/CARLA/Town05.xodr')  # or other CARLA map that definitely works\nparam carla_map = 'Town05'\nmodel scenic.simulators.carla.model\n\n",
+  "constants": "\nEGO_MODEL = \"vehicle.lincoln.mkz_2017\"\nEGO_SPEED = 10\n\n",
+  "monitors": null,
+  "behaviors": "\nbehavior EgoBehavior(speed=10):\n    try:\n        do FollowLaneBehavior(speed)\n    interrupt when withinDistanceToObjsInLane(self, 10):\n        take SetBrakeAction(1.0)\n\n",
+  "spatial_relations": "\nbackground_vehicles = []\nfor _ in range(25):\n    lane = Uniform(*network.lanes)\n    spot = new OrientedPoint on lane.centerline\n    background_car = new Car at spot,\n        with behavior AutopilotBehavior()\n    background_vehicles.append(background_car)\n\nbackground_walkers = []\nfor _ in range(10):\n    sideWalk = Uniform(*network.sidewalks)\n    background_walker = new Pedestrian in sideWalk,\n        with behavior WalkBehavior()\n    background_walkers.append(background_walker)\n\n",
+  "scenario": "\nego = new Car following roadDirection from spot for Range(-30, -20),\n    with blueprint EGO_MODEL,\n    with behavior EgoBehavior(EGO_SPEED)\n",
+  "name": "backgroundActivity"
+}

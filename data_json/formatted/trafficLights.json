@@ -1,0 +1,11 @@
+{
+  "docstring": "\"\"\" Scenario Description\nExample scenario of traffic lights management.\n\"\"\"",
+  "has_docstring": true,
+  "map_and_model": "\nparam map = localPath('../../assets/maps/CARLA/Town01.xodr')  # or other CARLA map that definitely works\nparam carla_map = 'Town01'\nmodel scenic.simulators.carla.model\n\n",
+  "constants": "\nEGO_MODEL = \"vehicle.lincoln.mkz_2017\"\nEGO_SPEED = 10\n\n",
+  "monitors": null,
+  "behaviors": "\nbehavior EgoBehaviorTL(speed=10):\n    try:\n        do FollowLaneBehavior(speed)\n    interrupt when withinDistanceToRedYellowTrafficLight(self, 15):\n        take SetBrakeAction(1.0)\n\n",
+  "spatial_relations": "\n\nlane = Uniform(*network.lanes)\n\n",
+  "scenario": "\nego = new Car on lane.centerline,\n    with blueprint EGO_MODEL,\n    with behavior EgoBehaviorTL(EGO_SPEED)\n\nrequire (distance to intersection) < 50\nrequire (distance to intersection) > 5\n",
+  "name": "trafficLights"
+}

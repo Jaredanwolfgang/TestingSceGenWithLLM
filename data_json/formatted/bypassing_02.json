@@ -1,0 +1,11 @@
+{
+  "docstring": "\"\"\"\nTITLE: Bypassing 02\nAUTHOR: Francis Indaheng, findaheng@berkeley.edu\nDESCRIPTION: Adversary vehicle performs a lane change to bypass the \nslow ego vehicle before returning to its original lane.\nSOURCE: NHSTA, #16\n\"\"\"",
+  "has_docstring": true,
+  "map_and_model": "\nparam map = localPath('../../../assets/maps/CARLA/Town03.xodr')\nparam carla_map = 'Town03'\nmodel scenic.simulators.carla.model\n\n",
+  "constants": "\nMODEL = 'vehicle.lincoln.mkz_2017'\n\nparam EGO_SPEED = VerifaiRange(2, 4)\n\nparam ADV_DIST = VerifaiRange(-25, -10)\nparam ADV_SPEED = VerifaiRange(7, 10)\n\nBYPASS_DIST = [15, 10]\nINIT_DIST = 50\nTERM_TIME = 5\n\n",
+  "monitors": null,
+  "behaviors": "\nbehavior AdversaryBehavior():\n    try:\n        do FollowLaneBehavior(target_speed=globalParameters.ADV_SPEED)\n    interrupt when withinDistanceToAnyObjs(self, BYPASS_DIST[0]):\n        fasterLaneSec = self.laneSection.fasterLane\n        do LaneChangeBehavior(\n                laneSectionToSwitch=fasterLaneSec,\n                target_speed=globalParameters.ADV_SPEED)\n        do FollowLaneBehavior(\n                target_speed=globalParameters.ADV_SPEED,\n                laneToFollow=fasterLaneSec.lane) \\\n            until (distance to adversary) > BYPASS_DIST[1]\n        slowerLaneSec = self.laneSection.slowerLane\n        do LaneChangeBehavior(\n                laneSectionToSwitch=slowerLaneSec,\n                target_speed=globalParameters.ADV_SPEED)\n        do FollowLaneBehavior(target_speed=globalParameters.ADV_SPEED) for TERM_TIME seconds\n        terminate \n\n",
+  "spatial_relations": "\ninitLane = Uniform(*network.lanes)\negoSpawnPt = new OrientedPoint in initLane.centerline\n\n",
+  "scenario": "\nego = new Car at egoSpawnPt,\n    with blueprint MODEL,\n    with behavior FollowLaneBehavior(target_speed=globalParameters.EGO_SPEED)\n\nadversary = new Car following roadDirection for globalParameters.ADV_DIST,\n    with blueprint MODEL,\n    with behavior AdversaryBehavior()\n\nrequire (distance to intersection) > INIT_DIST\nrequire (distance from adversary to intersection) > INIT_DIST\nrequire always (ego.laneSection._fasterLane is not None)\n",
+  "name": "bypassing_02"
+}
