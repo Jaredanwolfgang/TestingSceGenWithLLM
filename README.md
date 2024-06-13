@@ -29,6 +29,25 @@ Phase 2:
 
 The package that we uses to tune the Large Language Models is LangChain, using which we try to construct a output parser and also a chained agents. 
 
+# Environment Building
+
+This project uses conda to help manage the environments. To create the environment, run the following command:
+
+```bash
+conda env create -n scenegenwithllm python=3.8
+conda activate scenegenwithllm
+# If you are using OpenAI API, you need to install openai
+pip install openai
+pip install langchain
+pip install langchain_chroma
+pip install langchain_openai
+pip install tiktoken
+pip install scenic
+
+# If you are using a local model like Llama v2, you need to install langchain_community
+pip install langchain_community
+```
+
 # License
 
 BSD 3-Clause (see LICENSE).
