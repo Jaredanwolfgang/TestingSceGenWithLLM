@@ -46,6 +46,8 @@ pip install scenic
 
 # If you are using a local model like Llama v2, you need to install langchain_community
 pip install langchain_community
+
+pip install sentence_transformers # Use hugging face embeddings 
 ```
 
 # License
