@@ -3,7 +3,7 @@
 TITLE: Left Turn Intersection Cut-off
 AUTHOR: [Your Name], [your_email@example.com]
 DESCRIPTION: Ego vehicle is turning left at an intersection in an urban area under clear weather conditions. It cuts across the path of another vehicle initially traveling in the same direction.
-****** could run, but not correct because 2 vehicles are not parallel initially
+****** could run, but not accurate because 2 vehicles are not parallel initially
 """
 
 ##Map and Model##

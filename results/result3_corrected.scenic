@@ -3,6 +3,7 @@
 TITLE: Lane Change Encroachment
 AUTHOR: [Your Name], [your.email@example.com]
 DESCRIPTION: Ego vehicle changes lanes in an urban area at a non-junction and encroaches into another vehicle traveling in the same direction.
+****** not correctly describe the scenario (no encroaching)
 """
 
 ##Map and Model##
